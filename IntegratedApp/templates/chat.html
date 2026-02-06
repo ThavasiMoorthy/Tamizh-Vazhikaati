@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Tamil Kovil Vazhikati</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">Tamil Kovil Vazhikati</div>
+            <div class="user-profile">
+                <span id="greeting">Hi, Guest</span>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Chat Area -->
+        <div id="chat-box" class="chat-box">
+            <div class="message bot">
+                <div class="bubble">வணக்கம்! நான் உங்கள் தமிழ் கோயில் வழிகாட்டி. நீங்கள் கோயில்கள் பற்றி கேட்கலாம்,
+                    கவிதை எழுத சொல்லலாம். (Hello! I am your Tamil Temple Guide. Ask me anything!)</div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." onkeypress="handleKey(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+    <script>
+        // Set name on load
+        const name = localStorage.getItem('full_name');
+        if (name) {
+            document.getElementById('greeting').innerText = `Hi, ${name}`;
+        } else {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+
+</html>

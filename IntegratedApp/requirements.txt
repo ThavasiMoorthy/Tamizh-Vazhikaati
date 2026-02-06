@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+torch
+transformers
+huggingface_hub
+sentencepiece
+jinja2
+python-multipart

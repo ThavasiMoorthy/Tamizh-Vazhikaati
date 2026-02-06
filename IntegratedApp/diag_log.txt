@@ -1,0 +1,16 @@
+[KB Engine] Loaded 2535 KB entries and 19313 aliases.
+D:\QA_LLM\KB\IntegratedApp\main.py:32: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [34832]
+INFO:     Waiting for application startup.
+Starting up engines...
+Engines Ready (AI Models: DISABLED).
+INFO:     Application startup complete.
+ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

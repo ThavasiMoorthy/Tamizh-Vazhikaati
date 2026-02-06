@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil Kovil Vazhikati - AI Explorer</title>
+
+    <!-- React & ReactDOM (Stable Bundle) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-orange: #f97316;
+            --secondary-orange: #fbbf24;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #030712;
+            color: #f9fafb;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 50vw;
+            height: 50vh;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 95%;
+            max-width: 1100px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 28px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 14px 20px;
+            border-radius: 22px;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease-out;
+            word-wrap: break-word;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-bubble {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f3f4f6;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(249, 115, 22, 0.3) transparent;
+        }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: rgba(249, 115, 22, 0.3);
+            border-radius: 10px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #f97316, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow" style="top: -10%; left: -10%;"></div>
+    <div class="bg-glow" style="bottom: -10%; right: -10%;"></div>
+
+    <div id="root" class="w-full flex justify-center items-center">
+        <!-- Direct Fallback Loading -->
+        <div class="text-orange-500 text-xl font-bold animate-pulse">
+            Connecting to Spiritual Hub...
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        function App() {
+            const [messages, setMessages] = useState([
+                { id: 1, text: "வணக்கம்! நான் உங்கள் கோயில் வழிகாட்டி. ஆன்மீக கேள்விகளை கேட்கவும்.", sender: 'bot' }
+            ]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const chatEndRef = useRef(null);
+
+            useEffect(() => {
+                chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            }, [messages]);
+
+            const onSend = async () => {
+                if (!input.trim() || loading) return;
+                const txt = input.trim();
+                const userMsg = { id: Date.now(), text: txt, sender: 'user' };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setLoading(true);
+
+                try {
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: txt, mode: 'auto' })
+                    });
+                    const data = await res.json();
+                    setMessages(prev => [...prev, {
+                        id: Date.now() + 1,
+                        text: data.response || "No response.",
+                        sender: 'bot'
+                    }]);
+                } catch (e) {
+                    setMessages(prev => [...prev, { id: Date.now() + 1, text: "Connection Error.", sender: 'bot' }]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="glass-panel overflow-hidden">
+                    <header className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                        <div className="flex items-center gap-4">
+                            <div className="text-3xl">🕉️</div>
+                            <div>
+                                <h1 className="text-xl font-bold">கோவில் <span className="gradient-text">வழிகாட்டி</span></h1>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 chat-scroll bg-black/5">
+                        {messages.map(m => (
+                            <div key={m.id} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                                <div className={`bubble ${m.sender === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
+                                    {m.text}
+                                </div>
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="bot-bubble px-4 py-2 flex gap-1 animate-pulse">
+                                <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2"></span>
+                                <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2" style={{ animationDelay: '0.2s' }}></span>
+                                <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2" style={{ animationDelay: '0.4s' }}></span>
+                            </div>
+                        )}
+                        <div ref={chatEndRef} />
+                    </div>
+
+                    <div className="p-6 border-t border-white/10 bg-white/5">
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                className="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-orange-500/50"
+                                placeholder="Type your question..."
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && onSend()}
+                            />
+                            <button
+                                onClick={onSend}
+                                className="bg-orange-600 px-6 py-4 rounded-xl font-bold hover:bg-orange-500 transition-all disabled:opacity-20"
+                                disabled={loading || !input.trim()}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div >
+            );
+        }
+
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+        } catch (e) {
+            document.getElementById('root').innerHTML = `<div style="color:red; padding:20px;">UI Initialization Error: ${e.message}</div>`;
+        }
+    </script>
+</body>
+
+</html>

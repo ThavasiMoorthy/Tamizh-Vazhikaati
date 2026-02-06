@@ -1,0 +1,44 @@
+DEPLOYMENT INSTRUCTIONS
+=======================
+
+Please send the following 4 files to your App Team:
+
+1. tamil_temple_qa_server.py  (The main server code)
+2. requirements.txt           (List of python libraries)
+3. kb_updated.json            (The knowledge base data)
+4. alias_map.json             (The MASTER mapping file. Rename 'alias_map (3).json' to this. It matches both old keywords AND new questions.)
+
+OPTIONAL (For Testing Team)
+===========================
+5. nl_questions_map.json      (You can send this as a "Reference List" so testers know what questions to ask. The server doesn't use it, but humans might find it useful.)
+
+* NOTE: Do NOT send 'alias_map_backup.json'. That is just an old backup.
+
+HOW TO RUN
+==========
+1. Install Python (if not installed).
+2. Install dependencies:
+   pip install -r requirements.txt
+
+3. Make sure all 4 files are in the same folder.
+
+4. Run the server:
+   python tamil_temple_qa_server.py
+
+5. The server will start at: http://0.0.0.0:8000
+   
+API USAGE
+=========
+Endpoint: POST /ask
+URL: http://<server-ip>:8000/ask
+Headers: Content-Type: application/json
+Body: 
+{
+    "question": "அண்ணாமலையார் கோயில் எந்த மாவட்டத்தில் உள்ளது?"
+}
+
+Response:
+{
+    "answer": "அண்ணாமலையார் கோயில் திருவண்ணாமலை மாவட்டத்தில் அமைந்துள்ளது",
+    "found": true
+}
